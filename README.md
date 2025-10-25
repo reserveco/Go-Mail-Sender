@@ -8,295 +8,225 @@ Go-Mail Sender - Полное руководство
 
 Оглавление
 ----------
-
 *   Обзор программы
-    
 *   Возможности
-    
 *   Установка и настройка
-    
 *   Режим командной строки (CLI)
-    
 *   REST API режим
-    
 *   Форматы файлов
-    
 *   Логирование и мониторинг
-    
 *   Примеры использования
-    
 *   Устранение неполадок
-    
 *   Безопасность
-    
 *   Производительность
     
 
 Обзор программы
 ---------------
-
 Go-Mail Sender - это универсальная программа для отправки электронной почты, написанная на Go. Поддерживает два режима работы:
-
 *   **CLI режим** - для разовой отправки писем через командную строку
-    
 *   **REST API режим** - для интеграции с другими приложениями
     
 
 Возможности
 -----------
-
 *   ✅ Отправка одиночных и массовых писем
-    
 *   ✅ Поддержка HTML и текстовых писем
-    
 *   ✅ Вложения файлов
-    
 *   ✅ Загрузка списка получателей из JSON
-    
 *   ✅ Асинхронная отправка нескольким получателям
-    
 *   ✅ Детальное логирование в JSON формате
-    
 *   ✅ REST API для интеграции
-    
 *   ✅ Поддержка STARTTLS и SSL
-    
 *   ✅ Автоматическая генерация ID писем
-    
 *   ✅ Статус отправки для каждого получателя
     
 
 Установка и настройка
 ---------------------
-
 ### Системные требования
-
 *   Ubuntu 18.04+ или другая Linux-система
-    
 *   Go 1.16+ (для сборки из исходников)
-    
 *   Доступ к SMTP серверу
     
 
 ### Установка Go
 ```bash
-\# Ubuntu/Debian
+# Ubuntu/Debian
 sudo apt update
 sudo apt install golang-go
 
-\# Или установка последней версии
+# Или установка последней версии
 wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
-sudo tar \-C /usr/local \-xzf go1.21.0.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
 echo 'export PATH=$PATH:/usr/local/go/bin' \>> ~/.bashrc
 source ~/.bashrc
 ```
 ### Сборка программы
 
 ```bash
-\# Инициализация модуля
+# Инициализация модуля
 go mod init go-mail
 
-\# Установка зависимостей
+# Установка зависимостей
 go get github.com/gin-gonic/gin
 go get github.com/google/uuid
 go get github.com/wneessen/go-mail
 
-\# Сборка
-go build \-o go-mail
+# Сборка
+go build -o go-mail
 
-\# Проверка
-./go-mail \-help
+# Проверка
+./go-mail -help
 ```
-### Настройка SMTP
 
+
+### Настройка SMTP
 Программа поддерживает различные SMTP серверы. Основные параметры:
 
-Параметр
-
-По умолчанию
-
-Описание
+Параметр По умолчанию Описание
 
 `-host`
-
 `smtp.example.com`
-
 SMTP сервер
 
 `-port`
-
 `25`
-
 Порт SMTP
 
 `-user`
-
 `user@example.com`
-
 Email отправителя
 
 `-pass`
-
 `your_password`
-
 Пароль
+
 
 Режим командной строки (CLI)
 ----------------------------
-
 ### Все доступные флаги
-
 ```bash
-./go-mail \-help
+./go-mail -help
 ```
 **Основные флаги:**
 
 Флаг
-
 Описание
-
 Пример
 
 `-host`
-
 SMTP хост
-
 `-host smtp.example.com`
 
 `-port`
-
 SMTP порт
-
 `-port 587`
 
 `-user`
-
 Email отправителя
-
 `-user sender@example.com`
 
 `-pass`
-
 Пароль
-
 `-pass "secret"`
 
 `-to`
-
 Получатели через запятую
-
 `-to "user1@example.com,user2@example.com"`
 
 `-toFile`
-
 JSON файл со списком получателей
-
 `-toFile recipients.json`
 
 `-subject`
-
 Тема письма
-
 `-subject "Важное сообщение"`
 
 `-body`
-
 Текст письма
-
 `-body "Содержимое письма"`
 
 `-bodyFile`
-
 Файл с содержимым письма
-
 `-bodyFile message.html`
 
 `-html`
-
 Использовать HTML формат
-
 `-html`
 
 `-attach`
-
 Файлы для вложения через запятую
-
 `-attach "file1.pdf,image.jpg"`
 
 `-id`
-
 ID письма
-
 `-id "newsletter_001"`
 
 `-api`
-
 Запуск в API режиме
-
 `-api :8080`
 
-### Примеры использования CLI
 
+
+### Примеры использования CLI
 #### 1\. Простое текстовое письмо
 
-bash
-
-./go-mail \\
-  \-to "user@example.com" \\
-  \-subject "Тестовое письмо" \\
-  \-body "Это тестовое сообщение"
+```bash
+./go-mail \
+  -to "user@example.com" \
+  -subject "Тестовое письмо" \
+  -body "Это тестовое сообщение"
+```
 
 #### 2\. HTML письмо с файлом
 
-bash
-
-./go-mail \\
-  \-to "user@example.com" \\
-  \-subject "HTML письмо" \\
-  \-bodyFile "newsletter.html" \\
-  \-html
-
+```bash
+./go-mail \
+  -to "user@example.com" \
+  -subject "HTML письмо" \
+  -bodyFile "newsletter.html" \
+  -html
+```
 #### 3\. Письмо с вложениями
 
-bash
-
-./go-mail \\
-  \-to "user@example.com" \\
-  \-subject "Документы" \\
-  \-body "Смотрите вложения" \\
-  \-attach "document.pdf,image.jpg"
-
+```bash
+./go-mail \
+  -to "user@example.com" \
+  -subject "Документы" \
+  -body "Смотрите вложения" \
+  -attach "document.pdf,image.jpg"
+```
 #### 4\. Массовая рассылка
 
-bash
-
-./go-mail \\
-  \-to "user1@example.com,user2@example.com,user3@example.com" \\
-  \-subject "Массовая рассылка" \\
-  \-body "Общее сообщение для всех"
-
+```bash
+./go-mail \
+  -to "user1@example.com,user2@example.com,user3@example.com" \
+  -subject "Массовая рассылка" \
+  -body "Общее сообщение для всех"
+```
 #### 5\. Использование файла получателей
 
 ```bash
-./go-mail \\
-  \-toFile "recipients.json" \\
-  \-subject "Рассылка из файла" \\
-  \-body "Сообщение для списка получателей"
+./go-mail \
+  -toFile "recipients.json" \
+  -subject "Рассылка из файла" \
+  -body "Сообщение для списка получателей"
 ```
 #### 6\. Полный пример со всеми параметрами
 
 ```bash
-./go-mail \\
-  \-host "smtp.example.com" \\
-  \-port 25 \\
-  \-user "sender@example.com" \\
-  \-pass "password" \\
-  \-to "user1@example.com,user2@example.com" \\
-  \-subject "Важное сообщение" \\
-  \-bodyFile "message.html" \\
-  \-html \\
-  \-attach "report.pdf" \\
-  \-id "newsletter\_001"
+./go-mail \
+  -host "smtp.example.com" \
+  -port 25 \
+  -user "sender@example.com" \
+  -pass "password" \
+  -to "user1@example.com,user2@example.com" \
+  -subject "Важное сообщение" \
+  -bodyFile "message.html" \
+  -html \
+  -attach "report.pdf" \
+  -id "newsletter_001"
 ```
 REST API режим
 --------------
@@ -304,7 +234,7 @@ REST API режим
 ### Запуск API сервера
 
 ```bash
-./go-mail \-api :8080
+./go-mail -api :8080
 ```
 Сервер запустится на указанном порту и будет доступен для HTTP запросов.
 
@@ -318,20 +248,20 @@ REST API режим
 
 ```json
 {
-  "to": \["user1@example.com", "user2@example.com"\],
+  "to": ["user1@example.com", "user2@example.com"],
   "subject": "Тема письма",
   "body": "Текст письма",
-  "body\_file": "путь/к/файлу.html",
-  "is\_html": true,
-  "attachments": \["file1.pdf", "image.jpg"\],
-  "message\_id": "custom\_id\_123"
+  "body_file": "путь/к/файлу.html",
+  "is_html": true,
+  "attachments": ["file1.pdf", "image.jpg"],
+  "message_id": "custom_id_123"
 }
 ```
 **Ответ:**
 
 ```json
 {
-  "id": "custom\_id\_123",
+  "id": "custom_id_123",
   "status": "accepted",
   "message": "Письмо принято в обработку"
 }
@@ -345,10 +275,10 @@ REST API режим
 
 ```json
 {
-  "id": "custom\_id\_123",
+  "id": "custom_id_123",
   "timestamp": "2024-01-15T14:30:45.123456789Z",
-  "overall\_status": "partial\_success",
-  "details": \[
+  "overall_status": "partial_success",
+  "details": [
     {
       "email": "user1@example.com",
       "status": "success",
@@ -361,7 +291,7 @@ REST API режим
       "time": "2024-01-15T14:30:47.123456789Z",
       "error": "ошибка отправки: ..."
     }
-  \]
+  ]
 }
 ```
 #### 3\. Проверка здоровья
@@ -382,19 +312,19 @@ REST API режим
 #### Отправка письма через curl
 
 ```bash
-curl \-X POST http://localhost:8080/api/send \\
-  \-H "Content-Type: application/json" \\
-  \-d '{
-    "to": \["test@example.com"\],
+curl -X POST http://localhost:8080/api/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": ["test@example.com"],
     "subject": "Тест через API",
     "body": "Это тестовое письмо отправленное через REST API",
-    "is\_html": false
+    "is_html": false
   }'
 ```
 #### Проверка статуса
 
 ```bash
-curl http://localhost:8080/api/status/custom\_id\_123
+curl http://localhost:8080/api/status/custom_id_123
 ```
 #### Использование с Python
 
@@ -402,10 +332,10 @@ curl http://localhost:8080/api/status/custom\_id\_123
 import requests
 
 response \= requests.post("http://localhost:8080/api/send", json\={
-    "to": \["user@example.com"\],
+    "to": ["user@example.com"],
     "subject": "Письмо из Python",
     "body": "Сообщение отправленное через Python скрипт",
-    "is\_html": False
+    "is_html": False
 })
 
 print(response.json())
@@ -419,12 +349,12 @@ print(response.json())
 
 ```json
 {
-  "emails": \[
+  "emails": [
     "user1@example.com",
     "user2@example.com",
     "user3@example.com",
     "user4@example.com"
-  \]
+  ]
 }
 ```
 **Пример создания:**
@@ -432,11 +362,11 @@ print(response.json())
 ```bash
 cat \> recipients.json << EOF
 {
-  "emails": \[
+  "emails": [
     "user1@example.com",
     "user2@example.com",
     "user3@example.com"
-  \]
+  ]
 }
 EOF
 ```
@@ -491,20 +421,20 @@ EOF
 
 ```text
 logs/
-├── newsletter\_001.json
+├── newsletter_001.json
 ├── 550e8400-e29b-41d4-a716-446655440000.json
-└── custom\_id\_123.json
+└── custom_id_123.json
 ```
 ### Формат лог-файла
 
 ```json
 {
-  "id": "newsletter\_001",
+  "id": "newsletter_001",
   "timestamp": "2024-01-15T14:30:45.123456789Z",
   "from": "sender@example.com",
   "subject": "Новости компании",
-  "overall\_status": "partial\_success",
-  "recipients": \[
+  "overall_status": "partial_success",
+  "recipients": [
     {
       "email": "user1@example.com",
       "status": "success",
@@ -517,7 +447,7 @@ logs/
       "time": "2024-01-15T14:30:47.123456789Z",
       "error": "ошибка отправки: dial tcp: lookup example.com: no such host"
     }
-  \]
+  ]
 }
 ```
 ### Статусы отправки
@@ -534,14 +464,14 @@ logs/
 ### Мониторинг логов
 
 ```bash
-\# Просмотр всех логов
-ls \-la logs/
+# Просмотр всех логов
+ls -la logs/
 
-\# Чтение конкретного лога
-cat logs/newsletter\_001.json
+# Чтение конкретного лога
+cat logs/newsletter_001.json
 
-\# Мониторинг в реальном времени (если используется API)
-tail \-f logs/latest.log
+# Мониторинг в реальном времени (если используется API)
+tail -f logs/latest.log
 ```
 Примеры использования
 ---------------------
@@ -550,41 +480,41 @@ tail \-f logs/latest.log
 
 ```bash
 #!/bin/bash
-\# daily\_newsletter.sh
+# daily_newsletter.sh
 
-./go-mail \\
-  \-toFile "subscribers.json" \\
-  \-subject "Ежедневные новости $(date +%Y-%m-%d)" \\
-  \-bodyFile "daily\_news.html" \\
-  \-html \\
-  \-id "daily\_$(date +%Y%m%d)"
+./go-mail \
+  -toFile "subscribers.json" \
+  -subject "Ежедневные новости $(date +%Y-%m-%d)" \
+  -bodyFile "daily_news.html" \
+  -html \
+  -id "daily_$(date +%Y%m%d)"
 ```
 ### Сценарий 2: Уведомления системы
 
 ```bash
 #!/bin/bash
-\# system\_alert.sh
+# system_alert.sh
 
-./go-mail \\
-  \-to "admin@company.com" \\
-  \-subject "Системное оповещение" \\
-  \-body "Система обнаружила проблему: $1" \\
-  \-id "alert\_$(date +%s)"
+./go-mail \
+  -to "admin@company.com" \
+  -subject "Системное оповещение" \
+  -body "Система обнаружила проблему: $1" \
+  -id "alert_$(date +%s)"
 ```
 ### Сценарий 3: Интеграция с веб-приложением
 
 ```bash
-\# Запуск API сервера как службы
-nohup ./go-mail \-api :8080 \> mailer.log 2\>&1 &
+# Запуск API сервера как службы
+nohup ./go-mail -api :8080 \> mailer.log 2\>&1 &
 
-\# Использование в скрипте
-curl \-X POST http://localhost:8080/api/send \\
-  \-H "Content-Type: application/json" \\
-  \-d '{
-    "to": \["'"$USER\_EMAIL"'"\],
+# Использование в скрипте
+curl -X POST http://localhost:8080/api/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": ["'"$USER_EMAIL"'"],
     "subject": "Регистрация завершена",
     "body": "Добро пожаловать в нашу систему!",
-    "message\_id": "reg\_'$(date +%s)'"
+    "message_id": "reg_'$(date +%s)'"
   }'
 ```
 Устранение неполадок
@@ -655,27 +585,27 @@ telnet smtp.example.com 25
 #### Проверка DNS записей
 
 ```bash
-\# Проверка MX записей
+# Проверка MX записей
 dig MX example.com
 
-\# Проверка SPF
+# Проверка SPF
 dig TXT example.com
 ```
 #### Тестовые команды
 
 ```bash
-\# Простой тест отправки
-./go-mail \-to "test@example.com" \-subject "Test" \-body "Test message"
+# Простой тест отправки
+./go-mail -to "test@example.com" -subject "Test" -body "Test message"
 
-\# Тест с подробным выводом
-./go-mail \-to "test@example.com" \-subject "Debug" \-body "Test" \-id "debug\_test"
+# Тест с подробным выводом
+./go-mail -to "test@example.com" -subject "Debug" -body "Test" -id "debug_test"
 ```
 ### Логи для отладки
 
 Программа выводит подробную информацию в консоль:
 
 ```text
-📧 Отправка письма ID: newsletter\_001
+📧 Отправка письма ID: newsletter_001
    Сервер: smtp.example.com:25
    От: sender@example.com
    Тема: Тестовое письмо
@@ -683,8 +613,8 @@ dig TXT example.com
 🚀 Асинхронная отправка 2 писем...
    ✅ Успешно: user1@example.com
    ❌ Ошибка: user2@example.com - ошибка отправки: ...
-✅ Процесс отправки завершен! Статус: partial\_success
-📁 Лог сохранен: logs/newsletter\_001.json
+✅ Процесс отправки завершен! Статус: partial_success
+📁 Лог сохранен: logs/newsletter_001.json
 ```
 Безопасность
 ------------
@@ -719,12 +649,12 @@ dig TXT example.com
 ### Пример безопасной конфигурации
 
 ```bash
-\# Использование переменных окружения
-export SMTP\_PASSWORD\="your\_password"
-./go-mail \-to "$RECIPIENT" \-pass "$SMTP\_PASSWORD"
+# Использование переменных окружения
+export SMTP_PASSWORD\="your_password"
+./go-mail -to "$RECIPIENT" -pass "$SMTP_PASSWORD"
 
-\# Запуск API только на localhost
-./go-mail \-api 127.0.0.1:8080
+# Запуск API только на localhost
+./go-mail -api 127.0.0.1:8080
 ```
 
 
@@ -747,22 +677,22 @@ export SMTP\_PASSWORD\="your\_password"
 
 ```bash
 #!/bin/bash
-\# bulk\_sender.sh
+# bulk_sender.sh
 
-BATCH\_SIZE\=50
+BATCH_SIZE\=50
 DELAY\=5
 
-\# Разбиваем большой список на части
-jq \-c '.emails | .\[\]' recipients.json | \\
+# Разбиваем большой список на части
+jq -c '.emails | .[]' recipients.json | \
 while read email; do
-    ./go-mail \\
-        \-to "$email" \\
-        \-subject "Массовая рассылка" \\
-        \-bodyFile "message.html" \\
-        \-html \\
-        \-id "bulk\_$(date +%s)"
+    ./go-mail \
+        -to "$email" \
+        -subject "Массовая рассылка" \
+        -bodyFile "message.html" \
+        -html \
+        -id "bulk_$(date +%s)"
     
-    \# Задержка между отправками
+    # Задержка между отправками
     sleep $DELAY
 done
 ```
