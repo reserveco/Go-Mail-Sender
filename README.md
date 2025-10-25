@@ -1,7 +1,7 @@
 Go-Mail Sender - Полное руководство
 ===================================
 
-![Flat-square](https://img.shields.io/badge/Go-1.16+-00ADD8?logo=go](https://img.shields.io/badge/Go-1.16+-00ADD8?logo=go)  
+![Flat-square](https://img.shields.io/badge/Go-1.16+-00ADD8?logo=go)  
 ![Flat-square](https://img.shields.io/badge/SMTP-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B0-green)  
 ![Flat-square](https://img.shields.io/badge/REST-API-blue)  
 ![Flat-square](https://img.shields.io/badge/%D0%9B%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F-MIT-yellow)
